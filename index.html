@@ -1,0 +1,3739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>Save to Plan · TikTok prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=TikTok+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --white: #ffffff;
+      --muted: rgba(255, 255, 255, 0.65);
+      --count: rgba(255, 255, 255, 0.95);
+      --nav: #000000;
+      --stroke: #333333;
+      --pink: #fe2c55;
+      --green: #00c08c;
+      --chip: rgba(83, 83, 83, 0.4);
+      --toast: #464648;
+      --link: #37b6ff;
+      --subtle: #a6a8ad;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: #0d0d0d;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "TikTok Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--white);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      width: 100%;
+      padding: 24px 32px;
+      column-gap: 40px;
+    }
+
+    .guide-about { grid-column: 1; justify-self: end; }
+    .phone { grid-column: 2; }
+    .guide-steps { grid-column: 3; justify-self: start; }
+
+    .guide {
+      width: 380px;
+      flex-shrink: 0;
+      color: #fff;
+    }
+
+    .guide-tag {
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 28px;
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 10px;
+      background: #3a3a3a;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: 0;
+      text-transform: none;
+      color: #fff;
+    }
+
+    .guide-title {
+      margin-bottom: 8px;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .guide-lead {
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #a1a3a8;
+    }
+
+    .guide-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .guide-list li {
+      display: flex;
+      gap: 14px;
+      padding: 14px 14px;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      opacity: 0.45;
+      transition: opacity 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .guide-list li.active {
+      opacity: 1;
+      background: #1a1a1c;
+      border-color: #2c2c30;
+    }
+
+    .guide-list li.done { opacity: 0.7; }
+
+    .guide-num {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #3a3a3f;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .guide-list li.active .guide-num {
+      border-color: var(--pink);
+      background: var(--pink);
+    }
+
+    .guide-list li.done .guide-num {
+      border-color: #25f4ee;
+      color: transparent;
+      background: #25f4ee url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2.5 6.25 5 8.5l4.5-5' stroke='%23000' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px no-repeat;
+    }
+
+    .guide-list strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .guide-list em {
+      margin-left: 6px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #2c2c30;
+      font-size: 10px;
+      font-style: normal;
+      font-weight: 500;
+      vertical-align: 2px;
+      color: #a1a3a8;
+    }
+
+    .guide-list p {
+      font-size: 13px;
+      line-height: 1.45;
+      color: #a1a3a8;
+    }
+
+    .guide-meta {
+      display: none;
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #25f4ee;
+    }
+
+    .guide-list li.active .guide-meta { display: block; }
+
+    .guide-done {
+      display: none;
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(37, 244, 238, 0.1);
+      font-size: 11px;
+      line-height: 1.3;
+      white-space: nowrap;
+      color: #25f4ee;
+    }
+
+    .guide.complete .guide-done { display: block; }
+
+    .guide-tips {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 40px;
+      list-style: none;
+    }
+
+    .guide-tips li {
+      position: relative;
+      padding-left: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #a1a3a8;
+    }
+
+    .guide-tips li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 5px;
+      height: 5px;
+      border-radius: 3px;
+      background: #4a4a50;
+    }
+
+    .guide-reset {
+      padding: 10px 16px;
+      border: 1px solid #3a3a3f;
+      border-radius: 10px;
+      background: none;
+      color: #fff;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(4px);
+      transition: background 0.2s ease, opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    }
+
+    .guide-reset.show {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+    }
+
+    .guide-reset:hover { background: #1a1a1c; }
+
+    @media (max-width: 1360px) {
+      .guide-about { display: none; }
+    }
+
+    @media (max-width: 880px) {
+      .guide-steps { display: none; }
+    }
+
+    .phone {
+      zoom: var(--phone-scale, 1);
+      flex-shrink: 0;
+      width: 390px;
+      height: 844px;
+      position: relative;
+      overflow: hidden;
+      background: #000;
+      border-radius: 44px;
+      box-shadow:
+        0 0 0 10px #1c1c1c,
+        0 0 0 12px #2a2a2a,
+        0 30px 80px rgba(0, 0, 0, 0.55);
+    }
+
+    .feed {
+      width: 390px;
+      height: 844px;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+      overscroll-behavior: contain;
+    }
+
+    .feed::-webkit-scrollbar { display: none; }
+
+    .slide {
+      position: relative;
+      width: 390px;
+      height: 844px;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      overflow: hidden;
+      background: #000;
+      touch-action: pan-y;
+    }
+
+    .slide video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .slide .freeze,
+    .place-card .freeze {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      pointer-events: none;
+      object-fit: cover;
+    }
+
+    .slide.paused video,
+    .place-card.paused video { visibility: hidden; }
+
+    .slide.paused .freeze,
+    .place-card.paused .freeze { display: block; }
+
+    .shade-top {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 390px;
+      height: 220px;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0));
+      pointer-events: none;
+    }
+
+    .shade-bottom {
+      position: absolute;
+      left: 0;
+      top: 520px;
+      width: 390px;
+      height: 324px;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
+      pointer-events: none;
+    }
+
+    .status {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 390px;
+      height: 60px;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .time {
+      position: absolute;
+      top: 20px;
+      left: 26px;
+      width: 56px;
+      height: 20px;
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.408px;
+      line-height: 22px;
+      text-align: center;
+      font-feature-settings: "case" 1;
+    }
+
+    .island {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 127px;
+      height: 36px;
+      background: #000;
+      border-radius: 46px;
+    }
+
+    .island .camera {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #1a2230;
+      box-shadow: inset 0 0 0 2px #0b0f18;
+    }
+
+    .status-right {
+      position: absolute;
+      top: 20px;
+      right: 18px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 20px;
+    }
+
+    .status-right img { display: block; }
+
+    .tabs {
+      position: absolute;
+      top: 72px;
+      left: 0;
+      width: 390px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 0 8px;
+      pointer-events: none;
+    }
+
+    .tabs button {
+      pointer-events: auto;
+    }
+
+    .live {
+      position: relative;
+      width: 30.875px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .live img { display: block; }
+
+    .live span {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 9px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1625px;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .tab-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      height: 20px;
+    }
+
+    .tab {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.35;
+      color: var(--white);
+      opacity: 0.65;
+      white-space: nowrap;
+      background: none;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .tab.following { width: 80px; text-align: center; }
+
+    .tab.active {
+      font-weight: 700;
+      opacity: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tab.active::after {
+      content: "";
+      position: absolute;
+      top: 26px;
+      width: 32px;
+      height: 3px;
+      border-radius: 2px;
+      background: #fff;
+    }
+
+    .search {
+      width: 29px;
+      height: 29px;
+      flex-shrink: 0;
+      background: none;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .search img { display: block; }
+
+    .meta {
+      position: absolute;
+      left: 20px;
+      top: 628px;
+      width: 263px;
+      z-index: 8;
+      pointer-events: none;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px;
+      border-radius: 4px;
+      background: var(--chip);
+      margin-bottom: 13px;
+    }
+
+    .chip-icon {
+      width: 21px;
+      height: 20px;
+      border-radius: 2px;
+      background: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 1px;
+    }
+
+    .chip-icon img { display: block; }
+
+    .chip span {
+      font-size: 12px;
+      font-weight: 600;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.34);
+      padding-right: 4px;
+    }
+
+    .username {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+
+    .caption {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.35;
+      min-height: 40px;
+    }
+
+    .rail {
+      position: absolute;
+      left: 332px;
+      top: 334.5px;
+      width: 48px;
+      z-index: 8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 17px;
+      pointer-events: none;
+    }
+
+    .rail button {
+      pointer-events: auto;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 47px;
+      height: 47px;
+      margin-bottom: 19px;
+    }
+
+    .avatar-wrap img.avatar {
+      width: 47px;
+      height: 47px;
+      border-radius: 50%;
+      display: block;
+    }
+
+    .follow {
+      position: absolute;
+      left: 13px;
+      top: 38px;
+      width: 22px;
+      height: 22px;
+      border: 0;
+      background: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .follow img { display: block; }
+
+    .action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      background: none;
+      border: 0;
+      color: var(--count);
+      cursor: pointer;
+      font-family: inherit;
+      width: 34px;
+    }
+
+    .action img { display: block; }
+
+    .action .count {
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.46;
+      white-space: nowrap;
+      color: var(--count);
+    }
+
+    .action.share .count,
+    .action.bookmark .count {
+      font-weight: 600;
+    }
+
+    .action.liked img {
+      filter: invert(32%) sepia(98%) saturate(4000%) hue-rotate(330deg) brightness(102%) contrast(105%);
+    }
+
+    .bookmark-icon {
+      position: relative;
+      width: 22px;
+      height: 26px;
+    }
+
+    .bookmark-icon img {
+      position: absolute;
+      left: -1.971px;
+      top: -0.985px;
+    }
+
+    .action.bookmark .count {
+      font-size: 12px;
+      line-height: normal;
+      color: var(--white);
+    }
+
+    .disc {
+      width: 47px;
+      height: 47px;
+      margin-top: 4px;
+      animation: spin 4s linear infinite;
+    }
+
+    .disc img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: block;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .tabbar {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 390px;
+      height: 87px;
+      background: #000;
+      border-top: 0.5px solid var(--stroke);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 8px;
+      z-index: 20;
+    }
+
+    .nav-item {
+      flex: 1;
+      height: 54px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 2px;
+      padding: 0;
+      color: #fefefe;
+      text-decoration: none;
+      background: none;
+      border: 0;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .nav-item span {
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .icon-slot {
+      width: 25px;
+      height: 25px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .icon-slot.home img {
+      position: absolute;
+      left: 14.52%;
+      top: 7.59%;
+      width: 18.5714px;
+      height: 20.4258px;
+    }
+
+    .friends-icon {
+      width: 25px;
+      height: 25px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .friends-icon img:first-child {
+      position: absolute;
+      left: 2%;
+      top: 12%;
+      width: 15.5px;
+      height: 18.4px;
+    }
+
+    .friends-icon img:last-child {
+      position: absolute;
+      left: 56%;
+      top: 19.74%;
+      width: 10.8px;
+      height: 15.6px;
+    }
+
+    .create-slot {
+      flex: 1;
+      height: 54px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .create-slot img { display: block; }
+
+    .inbox-icon,
+    .profile-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .inbox-icon img,
+    .profile-icon img { display: block; }
+
+    .pause-hint {
+      position: absolute;
+      left: 50%;
+      top: 46%;
+      transform: translate(-50%, -50%);
+      width: 72px;
+      height: 80px;
+      display: none;
+      z-index: 7;
+      pointer-events: none;
+      filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.35));
+    }
+
+    .pause-hint svg {
+      display: block;
+      width: 72px;
+      height: 80px;
+    }
+
+    .slide.paused .pause-hint { display: block; }
+
+    .toast {
+      position: absolute;
+      left: calc(50% + 0.5px);
+      bottom: 92px;
+      width: 371px;
+      padding: 16px;
+      border-radius: 12px;
+      background: var(--toast);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 19;
+      opacity: 0;
+      transform: translate(-50%, 12px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+      pointer-events: auto;
+    }
+
+    .toast-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .toast-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: normal;
+    }
+
+    .toast-check {
+      position: relative;
+      width: 16.667px;
+      height: 16.667px;
+    }
+
+    .toast-check img {
+      position: absolute;
+      left: -1px;
+      top: -1px;
+    }
+
+    .toast-link {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: 0;
+      padding: 0;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: normal;
+      color: var(--link);
+      cursor: pointer;
+    }
+
+    .toast-link img { display: block; }
+
+    .toast-divider {
+      width: 339px;
+      border-top: 0.5px solid #A1A1A1;
+    }
+
+    .toast-divider,
+    .toast-plan { display: none; }
+
+    .toast.expanded .toast-divider { display: block; }
+    .toast.expanded .toast-plan { display: flex; }
+
+    .toast-plan-text {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+
+    .toast-plan-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .toast-plan-sub {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--subtle);
+    }
+
+    .plan-btn {
+      padding: 8px 12px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--pink);
+      color: var(--white);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.35;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .plan {
+      position: absolute;
+      inset: 0;
+      z-index: 40;
+      pointer-events: none;
+    }
+
+    .plan-screen {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(24px);
+      transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s;
+      pointer-events: none;
+      --ink: #161823;
+      --grey: #86878b;
+      --line: #e5e6e9;
+      --soft: #f7f7f9;
+    }
+
+    .plan-screen.active {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: auto;
+    }
+
+    .plan-screen.light { background: #fff; color: var(--ink); }
+    .plan-screen.dark { background: #000; color: #fff; }
+
+    .status.light .time { color: #161823; }
+
+    .plan-close {
+      position: absolute;
+      left: 18px;
+      top: 72px;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      border: 0;
+      background: none;
+      cursor: pointer;
+      z-index: 21;
+    }
+
+    .plan-close img { display: block; }
+
+    .plan-btn-primary {
+      width: 100%;
+      padding: 16px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--pink);
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.38;
+      cursor: pointer;
+    }
+
+    .time-body {
+      position: absolute;
+      left: 20px;
+      top: 126px;
+      width: 350px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .plan-heading {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      line-height: 1.38;
+    }
+
+    .plan-heading h1 {
+      font-size: 21px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .plan-heading p {
+      font-size: 14px;
+      color: var(--grey);
+    }
+
+    .option-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .option {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .option-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      line-height: 1.38;
+      white-space: nowrap;
+    }
+
+    .option-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .option-sub {
+      font-size: 12px;
+      color: var(--grey);
+    }
+
+    .option-radio {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+      border: 2px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+    }
+
+    .option-radio img { display: none; }
+
+    .option.selected { background: var(--ink); }
+    .option.selected .option-title { color: #fff; }
+    .option.selected .option-sub { color: #b8babf; }
+    .option.selected .option-radio { border: 0; background: none; }
+    .option.selected .option-radio img { display: block; }
+
+    .option-lead {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .option-lead > img,
+    .option > img { display: block; flex-shrink: 0; }
+
+    .option-dates .option-sub { font-size: 12.5px; }
+
+    .build-body {
+      position: absolute;
+      left: 50px;
+      top: 175px;
+      width: 290px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 60px;
+    }
+
+    .stack {
+      position: relative;
+      width: 282.256px;
+      height: 229.486px;
+    }
+
+    .stack-slot {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stack-slot:nth-child(1) { left: 0; top: 0; width: 192.537px; height: 229.486px; }
+    .stack-slot:nth-child(2) { left: 64px; top: 12px; width: 158.944px; height: 206.618px; }
+    .stack-slot:nth-child(3) { left: 109px; top: 6.72px; width: 173.256px; height: 216.79px; }
+
+    .stack-card {
+      width: 150px;
+      height: 200px;
+      flex: none;
+      border: 1px solid #fff;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .stack-slot:nth-child(1) .stack-card { transform: rotate(13.5deg); }
+    .stack-slot:nth-child(2) .stack-card { transform: rotate(2.61deg); }
+    .stack-slot:nth-child(3) .stack-card { transform: rotate(-7deg); }
+
+    .stack-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .build-info {
+      width: 290px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .build-heading {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .build-heading h1 { font-size: 24px; font-weight: 600; }
+    .build-heading p { font-size: 14px; color: #d9dbe0; }
+
+    .build-progress {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .build-bar {
+      position: relative;
+      width: 290px;
+      height: 4px;
+    }
+
+    .build-bar::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 2px;
+      background: #fff;
+      opacity: 0.2;
+    }
+
+    .build-bar span {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 4px;
+      width: 0;
+      border-radius: 2px;
+      background: #25f4ee;
+      transition: width 0.6s ease;
+    }
+
+    .build-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      list-style: none;
+    }
+
+    .build-steps li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.38;
+      color: #80828a;
+      white-space: nowrap;
+    }
+
+    .step-mark {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-mark::before {
+      content: "";
+      width: 11px;
+      height: 11px;
+      border-radius: 6px;
+      background: #fff;
+      opacity: 0.3;
+    }
+
+    .step-mark img { display: none; }
+
+    .build-steps li.done { color: #d9dbe0; }
+    .build-steps li.done .step-mark::before { display: none; }
+    .build-steps li.done .step-mark img { display: block; }
+
+    .build-note {
+      font-size: 12px;
+      line-height: 1.35;
+      color: #d9dbe0;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .deck-tools {
+      position: absolute;
+      top: 69px;
+      right: 21px;
+      display: flex;
+      align-items: center;
+      gap: 19px;
+      z-index: 21;
+    }
+
+    .undo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0;
+      border: 0;
+      background: none;
+      cursor: pointer;
+      visibility: hidden;
+    }
+
+    .undo.show { visibility: visible; }
+
+    .undo-thumb {
+      width: 14px;
+      height: 22.909px;
+      border: 0.636px solid var(--line);
+      border-radius: 2.545px;
+      box-shadow: 0 0 5.091px rgba(0, 0, 0, 0.12);
+      background-size: cover;
+      background-position: center;
+    }
+
+    .undo img { display: block; }
+
+    .wand {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 0;
+      border-radius: 33px;
+      background: var(--soft);
+      cursor: pointer;
+    }
+
+    .wand img { display: block; }
+
+    .deck-body {
+      position: absolute;
+      left: 22px;
+      top: 119px;
+      width: 347px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .deck-progress {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .deck-count {
+      font-size: 10px;
+      line-height: 1.38;
+      color: var(--grey);
+    }
+
+    .deck-bar {
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--line);
+    }
+
+    .deck-bar span {
+      display: block;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--ink);
+      transition: width 0.3s ease;
+    }
+
+    .deck {
+      position: relative;
+      width: 347px;
+      height: 537px;
+    }
+
+    .place-card {
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #000;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .place-card.top {
+      cursor: grab;
+      z-index: 2;
+    }
+
+    .place-card.flying {
+      transition: transform 0.35s ease-in, opacity 0.35s ease-in;
+    }
+
+    .place-card.returning {
+      transition: transform 0.2s ease-out;
+    }
+
+    .place-card > img,
+    .place-card > video,
+    .place-card > .freeze {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .place-card > video { opacity: 0; transition: opacity 0.2s ease; }
+    .place-card.playing > video { opacity: 1; }
+    .place-card .pause-hint { top: 50%; }
+    .place-card.paused .pause-hint { display: block; }
+
+    .place-card .card-dim {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.24);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .place-card .card-shade {
+      position: absolute;
+      left: 0;
+      top: 212px;
+      width: 347px;
+      height: 325px;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
+      pointer-events: none;
+    }
+
+    .card-meta {
+      position: absolute;
+      left: 20px;
+      top: 423px;
+      width: 307px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      color: #fff;
+      pointer-events: none;
+    }
+
+    .place-card .chip {
+      position: absolute;
+      left: 20px;
+      top: 17px;
+      margin-bottom: 0;
+      color: #fff;
+      pointer-events: none;
+    }
+
+    .rating.card-rating { color: #f6f6f6; }
+
+    .card-text {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .card-title { font-size: 16px; font-weight: 700; line-height: 1.35; }
+    .card-sub { font-size: 14px; line-height: 1.38; }
+    .card-handle { font-size: 12px; line-height: 1.38; color: #bfc2c7; }
+
+    .card-badge {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.24);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .card-badge img { display: block; }
+    .card-badge.keep { background: var(--pink); }
+    .card-badge.cut { background: #9ea1a8; }
+
+    .deck-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .choice-row {
+      display: flex;
+      gap: 9px;
+      width: 100%;
+    }
+
+    .choice {
+      width: 169px;
+      height: 45px;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.38;
+      cursor: pointer;
+    }
+
+    .choice.cut { background: #fff; border: 1px solid var(--line); color: var(--pink); }
+    .choice.keep { background: var(--ink); border: 0; color: #fff; }
+    .choice.ghost { background: #fff; border: 1px solid var(--line); color: var(--ink); }
+    .choice.primary { background: var(--pink); border: 0; color: #fff; }
+
+    .deck-note {
+      font-size: 12px;
+      line-height: 1.38;
+      color: #9ea1a8;
+      white-space: nowrap;
+    }
+
+    .coach {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      background: rgba(0, 0, 0, 0.8);
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+      color: #fff;
+      display: none;
+    }
+
+    .coach.show { display: block; }
+
+    .coach-body {
+      position: absolute;
+      left: 50px;
+      top: 147.5px;
+      width: 290px;
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+    }
+
+    .coach-heading {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .coach-heading h2 { font-size: 24px; font-weight: 600; }
+    .coach-heading p { font-size: 14px; color: #9ea1a8; }
+
+    .coach-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .coach-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .coach-list img { display: block; flex-shrink: 0; }
+
+    .coach-list div {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      line-height: 1.4;
+    }
+
+    .coach-list strong { font-size: 17px; font-weight: 600; }
+    .coach-list span { font-size: 13.5px; color: #a8abb2; }
+
+    .coach-foot {
+      position: absolute;
+      left: 20px;
+      top: 727px;
+      width: 350px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .coach-skip {
+      border: 0;
+      background: none;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.4;
+      color: #80828a;
+      cursor: pointer;
+    }
+
+    .sheet-wrap {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      visibility: hidden;
+      transition: visibility 0s linear 0.3s;
+    }
+
+    .sheet-wrap.show {
+      visibility: visible;
+      transition: none;
+    }
+
+    .sheet-scrim {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .sheet-wrap.show .sheet-scrim { opacity: 1; }
+
+    .sheet {
+      position: absolute;
+      left: 0;
+      top: 218px;
+      width: 390px;
+      height: 626px;
+      border-radius: 24px 24px 0 0;
+      background: #fff;
+      overflow: hidden;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .sheet-wrap.show .sheet { transform: none; }
+
+    .sheet .plan-close { left: 340px; top: 25px; }
+
+    .sheet-body {
+      position: absolute;
+      left: 22px;
+      top: 54px;
+      width: 347px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .sheet-intro {
+      width: 340px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 24px;
+    }
+
+    .sheet-wand {
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50.6px;
+      background: var(--soft);
+    }
+
+    .sheet-wand img { display: block; }
+
+    .sheet-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      width: 100%;
+    }
+
+    .sheet-heading {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      line-height: 1.35;
+    }
+
+    .sheet-heading h2 { font-size: 24px; font-weight: 600; color: var(--ink); }
+    .sheet-heading p { font-size: 14px; color: var(--grey); }
+
+    .criteria {
+      display: flex;
+      flex-direction: column;
+      gap: 21px;
+      list-style: none;
+    }
+
+    .criteria li {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .criteria-icon {
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      background: var(--soft);
+    }
+
+    .criteria-icon img { display: block; }
+
+    .criteria-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      line-height: 1.38;
+    }
+
+    .criteria-text strong { font-size: 14px; font-weight: 600; color: var(--ink); }
+    .criteria-text span { font-size: 12px; color: var(--grey); }
+
+    .sheet .option-dates { height: 67px; }
+
+    .itin-scroll {
+      position: absolute;
+      left: 0;
+      top: 114px;
+      right: 0;
+      bottom: 0;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+
+    .itin-scroll::-webkit-scrollbar { display: none; }
+
+    .itin-top {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 390px;
+      height: 114px;
+      background: #fff;
+      z-index: 20;
+    }
+
+    .itin-heading {
+      position: absolute;
+      left: 112px;
+      top: 73px;
+      width: 166px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      line-height: 1.38;
+      text-align: center;
+      z-index: 21;
+    }
+
+    .itin-heading h1 { font-size: 16px; font-weight: 600; color: var(--ink); }
+    .itin-heading p { font-size: 12px; color: var(--grey); }
+
+    .itin-shuffle {
+      position: absolute;
+      left: 339px;
+      top: 69px;
+      z-index: 21;
+    }
+
+    .itin-save {
+      position: absolute;
+      left: 20px;
+      top: 759px;
+      width: 350px;
+      z-index: 21;
+    }
+
+    .saved-body {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 350px;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 60px;
+    }
+
+    .saved-intro {
+      width: 290px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .saved-intro > img { display: block; }
+
+    .saved-text {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .saved-text h1 { font-size: 24px; font-weight: 600; }
+    .saved-text p { font-size: 14px; color: var(--grey); }
+
+    .saved-card {
+      position: relative;
+      width: 350px;
+      height: 182px;
+      border-radius: 12px;
+      background: var(--soft);
+    }
+
+    .saved-cover {
+      position: absolute;
+      width: 76px;
+      height: 102px;
+      border: 2px solid #fff;
+      border-radius: 12px;
+      background: center / cover no-repeat;
+      box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.12);
+      z-index: 0;
+    }
+
+    .saved-folder {
+      position: absolute;
+      left: 0;
+      top: 94px;
+      width: 350px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 25px 20px;
+      border: 1px solid #E5E6E9;
+      border-radius: 12px;
+      background: #fefefe;
+      z-index: 1;
+    }
+
+    .saved-folder-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      white-space: nowrap;
+    }
+
+    .saved-folder-text strong { font-size: 14px; font-weight: 600; line-height: 1.38; }
+    .saved-folder-text span { font-size: 13px; color: var(--grey); }
+
+    .saved-edit {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 33px;
+      background: var(--soft);
+    }
+
+    .saved-edit img { display: block; }
+
+    .saved-actions {
+      position: absolute;
+      left: 20px;
+      top: 716px;
+      width: 350px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .saved-share,
+    .saved-home {
+      border: 0;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.38;
+      cursor: pointer;
+    }
+
+    .saved-share {
+      width: 100%;
+      padding: 16px 24px;
+      border-radius: 12px;
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .saved-home {
+      padding: 0;
+      background: none;
+      color: var(--grey);
+    }
+
+    .itin-content {
+      width: 350px;
+      margin-left: 20px;
+      padding: 32px 0 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .itin-content.sectioned { padding-top: 16px; gap: 24px; }
+    .itin-content:has(.itin-banner) { padding-top: 16px; gap: 16px; }
+
+    .itin-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: var(--soft);
+      font-size: 11.5px;
+      line-height: 1.38;
+      color: var(--grey);
+      transition: opacity 0.3s ease;
+    }
+
+    .itin-banner.hide { opacity: 0; }
+
+    .itin-banner img { display: block; }
+
+    .itin-tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .itin-tab {
+      height: 33px;
+      padding: 8px 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.38;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .itin-tab.active {
+      border-color: var(--ink);
+      background: var(--ink);
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .itin-sections {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .itin-section {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .itin-section-head {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .itin-section-head h2 {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.38;
+      color: var(--ink);
+    }
+
+    .itin-divider {
+      display: block;
+      width: 350px;
+      height: 0;
+      border: 0;
+      border-top: 0.5px solid #A1A1A1;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .stop {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      width: 349px;
+    }
+
+    .stop-time {
+      padding-top: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.38;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .stop-line {
+      position: relative;
+      width: 0;
+      height: 78px;
+      flex-shrink: 0;
+    }
+
+    .stop-line img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform-origin: 0 0;
+      transform: rotate(90deg);
+    }
+
+    .stop-media {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .itin-thumb {
+      position: relative;
+      width: 51px;
+      height: 78px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+    }
+
+    .itin-thumb::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 19px;
+      width: 51px;
+      height: 59px;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
+    }
+
+    .itin-thumb img { position: relative; display: block; }
+
+    .stop-text {
+      width: 179px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      line-height: 1.38;
+    }
+
+    .stop-text strong { font-size: 14px; font-weight: 600; color: var(--ink); }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 15px;
+      font-size: 10px;
+      line-height: 1.46;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .rating img { display: block; }
+    .rating b { font-weight: 600; }
+
+    .itin-sub { font-size: 10px; line-height: 1.38; color: var(--grey); }
+    .itin-handle { font-size: 10px; line-height: 1.38; color: #9ea1a8; }
+
+    .travel {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 62px;
+      padding: 6px 12px;
+      border-radius: 16px;
+      background: var(--soft);
+      font-size: 11.5px;
+      line-height: 1.38;
+      color: var(--grey);
+      white-space: nowrap;
+    }
+
+    .travel-mode {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .travel-mode.walk {
+      width: 82px;
+      justify-content: space-between;
+    }
+
+    .travel img { display: block; }
+    .travel > img { margin: -0.64px; }
+
+    .add-stop {
+      width: 350px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px;
+      border: 1.5px dashed var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    button.add-stop {
+      font-family: inherit;
+      text-align: left;
+      cursor: default;
+    }
+
+    .add-stop img { display: block; flex-shrink: 0; }
+
+    .list-text {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      line-height: 1.38;
+    }
+
+    .list-text strong { font-size: 14px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+    .list-text span { font-size: 12px; color: var(--grey); }
+
+    .itin-rest {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .itin-rest-body {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .itin-rest-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .see-more {
+      padding: 0;
+      border: 0;
+      background: none;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.38;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .place-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .place-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0;
+      border: 0;
+      background: none;
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .place-row > img { display: block; flex-shrink: 0; }
+
+    .place-thumb {
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+      border: 0.559px solid rgba(173, 176, 181, 0.6);
+      border-radius: 6.706px;
+      background: var(--soft) center / cover no-repeat;
+    }
+
+    .fit-sheet {
+      top: auto;
+      bottom: 0;
+      height: auto;
+    }
+
+    .fit-body {
+      width: 340px;
+      margin: 51px 0 25px 25.5px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .fit-top {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .fit-place {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .fit-place-text {
+      width: 179px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .fit-place-text h2 {
+      font-size: 24px;
+      font-weight: 600;
+      line-height: 1.38;
+      color: var(--ink);
+    }
+
+    .fit-place-text .itin-sub { white-space: nowrap; }
+
+    .fit-divider { display: block; }
+
+    .fit-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .fit-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .fit-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0;
+      border: 0;
+      background: none;
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .fit-row img { display: block; flex-shrink: 0; }
+
+    .fit-row-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      line-height: 1.38;
+      white-space: nowrap;
+    }
+
+    .fit-row-text strong { font-size: 14px; font-weight: 600; color: var(--ink); }
+    .fit-row-text span { font-size: 12px; color: var(--grey); }
+
+    .fit-note {
+      font-size: 12.5px;
+      line-height: 1.38;
+      color: #9ea1a8;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="guide guide-about" aria-label="About this prototype">
+    <p class="guide-tag">Interactive prototype</p>
+    <h2 class="guide-title">Turn saves into plans</h2>
+    <p class="guide-lead">People save places on TikTok but rarely go. This concept turns 5+ saves in one city into a concrete plan that is personalized and fits your schedule.</p>
+    <ul class="guide-tips">
+      <li>Scroll and click inside the phone to go through the experience</li>
+      <li>Follow the highlighted steps on the right for guidance</li>
+      <li>Tap “Restart demo” any time to run through it again</li>
+    </ul>
+    <button class="guide-reset" type="button" id="guideReset">Restart demo</button>
+  </aside>
+
+  <div class="phone">
+    <div class="feed" id="feed">
+      <section class="slide">
+        <video src="assets/video1.mov" poster="assets/photo1.png" muted loop playsinline webkit-playsinline></video>
+        <canvas class="freeze"></canvas>
+        <div class="shade-top"></div>
+        <div class="shade-bottom"></div>
+        <div class="pause-hint" aria-hidden="true">
+          <svg viewBox="0 0 72 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 10v60l48-30-48-30Z" fill="#fff" fill-opacity=".9"/>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="chip">
+            <div class="chip-icon"><img src="assets/icons/54825.svg" width="17" height="17" alt="" /></div>
+            <span>New York</span>
+          </div>
+          <p class="username">jolinatravels</p>
+          <p class="caption">the italian festival had such good live music and so many must-try eats</p>
+        </div>
+        <aside class="rail" data-rail></aside>
+      </section>
+
+      <section class="slide">
+        <video src="assets/video2.mov" poster="assets/photo2.png" muted loop playsinline webkit-playsinline></video>
+        <canvas class="freeze"></canvas>
+        <div class="shade-top"></div>
+        <div class="shade-bottom"></div>
+        <div class="pause-hint" aria-hidden="true">
+          <svg viewBox="0 0 72 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 10v60l48-30-48-30Z" fill="#fff" fill-opacity=".9"/>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="chip">
+            <div class="chip-icon"><img src="assets/icons/54825.svg" width="17" height="17" alt="" /></div>
+            <span>New York</span>
+          </div>
+          <p class="username">jolinatravels</p>
+          <p class="caption">ai robot baristas??? made my delicious match today</p>
+        </div>
+        <aside class="rail" data-likes="110.3K" data-comments="868" data-saves="1,021" data-shares="854" data-rail></aside>
+      </section>
+
+      <section class="slide">
+        <video src="assets/video3.mov" poster="assets/photo3.png" muted loop playsinline webkit-playsinline></video>
+        <canvas class="freeze"></canvas>
+        <div class="shade-top"></div>
+        <div class="shade-bottom"></div>
+        <div class="pause-hint" aria-hidden="true">
+          <svg viewBox="0 0 72 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 10v60l48-30-48-30Z" fill="#fff" fill-opacity=".9"/>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="chip">
+            <div class="chip-icon"><img src="assets/icons/54825.svg" width="17" height="17" alt="" /></div>
+            <span>New York</span>
+          </div>
+          <p class="username">jolinatravels</p>
+          <p class="caption">first time trying georgian food and it’s now my new fav thing...</p>
+        </div>
+        <aside class="rail" data-likes="1021" data-comments="92" data-saves="124" data-shares="23" data-rail></aside>
+      </section>
+
+      <section class="slide">
+        <video src="assets/video4.mov" poster="assets/photo4.png" muted loop playsinline webkit-playsinline></video>
+        <canvas class="freeze"></canvas>
+        <div class="shade-top"></div>
+        <div class="shade-bottom"></div>
+        <div class="pause-hint" aria-hidden="true">
+          <svg viewBox="0 0 72 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 10v60l48-30-48-30Z" fill="#fff" fill-opacity=".9"/>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="chip">
+            <div class="chip-icon"><img src="assets/icons/54825.svg" width="17" height="17" alt="" /></div>
+            <span>New York</span>
+          </div>
+          <p class="username">jolinatravels</p>
+          <p class="caption">ruel is performing in new york again on sep 31st! will be going again</p>
+        </div>
+        <aside class="rail" data-likes="14.3K" data-comments="65" data-saves="211" data-shares="99" data-rail></aside>
+      </section>
+
+      <section class="slide">
+        <video src="assets/video5.mov" poster="assets/photo5.png" muted loop playsinline webkit-playsinline></video>
+        <canvas class="freeze"></canvas>
+        <div class="shade-top"></div>
+        <div class="shade-bottom"></div>
+        <div class="pause-hint" aria-hidden="true">
+          <svg viewBox="0 0 72 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 10v60l48-30-48-30Z" fill="#fff" fill-opacity=".9"/>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="chip">
+            <div class="chip-icon"><img src="assets/icons/54825.svg" width="17" height="17" alt="" /></div>
+            <span>New York</span>
+          </div>
+          <p class="username">jolinatravels</p>
+          <p class="caption">cuban food was delish and live music made the environment so lovely</p>
+        </div>
+        <aside class="rail" data-likes="188.8K" data-comments="360" data-saves="1.2K" data-shares="654" data-rail></aside>
+      </section>
+    </div>
+
+    <header class="status">
+      <div class="time">2:22</div>
+      <div class="island"><div class="camera"></div></div>
+      <div class="status-right">
+        <img src="assets/icons/47780.svg" width="20" height="20" alt="" />
+        <img src="assets/icons/474a9.svg" width="20" height="20" alt="" />
+        <img src="assets/icons/26c90.svg" width="32" height="20" alt="" />
+      </div>
+    </header>
+
+    <nav class="tabs">
+      <div class="live">
+        <img src="assets/icons/b5f2e.svg" width="30.875" height="26" alt="" />
+        <span>LIVE</span>
+      </div>
+      <div class="tab-row">
+        <button class="tab" type="button">ouver</button>
+        <button class="tab" type="button">Community</button>
+        <button class="tab following" type="button">Following</button>
+        <button class="tab active" type="button">For You</button>
+      </div>
+      <button class="search" type="button" aria-label="Search">
+        <img src="assets/icons/f3e13.svg" width="29" height="29" alt="" />
+      </button>
+    </nav>
+
+    <nav class="tabbar">
+      <button class="nav-item" type="button">
+        <div class="icon-slot home">
+          <img src="assets/icons/9ea15.svg" width="18.5714" height="20.4258" alt="" />
+        </div>
+        <span>Home</span>
+      </button>
+      <button class="nav-item" type="button">
+        <div class="friends-icon">
+          <img src="assets/icons/88824.svg" width="15.5" height="18.4" alt="" />
+          <img src="assets/icons/4d874.svg" width="10.8" height="15.6" alt="" />
+        </div>
+        <span>Friends</span>
+      </button>
+      <div class="create-slot">
+        <img src="assets/icons/ba9c2.svg" width="46.25" height="31.25" alt="Create" />
+      </div>
+      <button class="nav-item" type="button">
+        <div class="inbox-icon">
+          <img src="assets/icons/ba4cb.svg" width="24" height="24" alt="" />
+        </div>
+        <span>Inbox</span>
+      </button>
+      <button class="nav-item" type="button">
+        <div class="profile-icon">
+          <img src="assets/icons/6a80b.svg" width="17" height="20.188" alt="" />
+        </div>
+        <span>Profile</span>
+      </button>
+    </nav>
+
+    <div class="toast" id="saveToast" role="status" aria-live="polite">
+      <div class="toast-row">
+        <div class="toast-status">
+          <div class="toast-check"><img src="assets/icons/a35b4.svg" width="18.6667" height="18.6667" alt="" /></div>
+          <span>Saved</span>
+        </div>
+        <button class="toast-link" type="button">
+          Collections
+          <img src="assets/icons/95d67.svg" width="18" height="18" alt="" />
+        </button>
+      </div>
+      <div class="toast-divider"></div>
+      <div class="toast-row toast-plan">
+        <div class="toast-plan-text">
+          <span class="toast-plan-title">Ready to plan this?</span>
+          <span class="toast-plan-sub" id="planSub">5 places saved in New York</span>
+        </div>
+        <button class="plan-btn" type="button">Plan it</button>
+      </div>
+    </div>
+
+    <div class="plan" id="plan">
+      <section class="plan-screen light" id="screenTime" aria-label="When are you going?">
+        <header class="status light" data-status="light"></header>
+        <button class="plan-close" type="button" aria-label="Close" data-close>
+          <img src="assets/plan/fc709.svg" width="24" height="24" alt="" />
+        </button>
+        <div class="time-body">
+          <div class="plan-heading">
+            <h1>When are you going?</h1>
+            <p>You saved 5 places in New York. We’ll fit them into an itinerary for the duration of your plans.</p>
+          </div>
+          <div class="option-list" role="radiogroup" aria-label="When are you going?">
+            <button class="option" type="button" role="radio" aria-checked="false" data-mode="morning">
+              <span class="option-text"><span class="option-title">Morning</span><span class="option-sub">9AM – 12PM · 2 of 5 fit</span></span>
+              <span class="option-radio"><img src="assets/plan/25cac.svg" width="26" height="26" alt="" /></span>
+            </button>
+            <button class="option" type="button" role="radio" aria-checked="false" data-mode="afternoon">
+              <span class="option-text"><span class="option-title">Afternoon</span><span class="option-sub">12PM – 5PM · 3 of 5 fit</span></span>
+              <span class="option-radio"><img src="assets/plan/25cac.svg" width="26" height="26" alt="" /></span>
+            </button>
+            <button class="option" type="button" role="radio" aria-checked="false" data-mode="evening">
+              <span class="option-text"><span class="option-title">Evening</span><span class="option-sub">6PM – 11PM · 3 of 5 fit</span></span>
+              <span class="option-radio"><img src="assets/plan/25cac.svg" width="26" height="26" alt="" /></span>
+            </button>
+            <button class="option" type="button" role="radio" aria-checked="false" data-mode="fullDay">
+              <span class="option-text"><span class="option-title">Full Day</span><span class="option-sub">9AM – 11PM · All 5 fit</span></span>
+              <span class="option-radio"><img src="assets/plan/25cac.svg" width="26" height="26" alt="" /></span>
+            </button>
+            <button class="option" type="button" role="radio" aria-checked="false" data-mode="weekend">
+              <span class="option-text"><span class="option-title">Weekend</span><span class="option-sub">Two full days · All 5 fit</span></span>
+              <span class="option-radio"><img src="assets/plan/25cac.svg" width="26" height="26" alt="" /></span>
+            </button>
+            <button class="option option-dates" type="button">
+              <span class="option-lead">
+                <img src="assets/plan/221b5.svg" width="22" height="22" alt="" />
+                <span class="option-text"><span class="option-title">Add Dates</span><span class="option-sub">So we know what's open when you go</span></span>
+              </span>
+              <img src="assets/plan/0f726.svg" width="20" height="20" alt="" />
+            </button>
+          </div>
+          <button class="plan-btn-primary" type="button" id="buildPlan">Build my plan</button>
+        </div>
+      </section>
+
+      <section class="plan-screen dark" id="screenBuild" aria-label="Building your plan">
+        <header class="status" data-status="dark"></header>
+        <button class="plan-close" type="button" aria-label="Close" data-close>
+          <img src="assets/plan/4d29e.svg" width="24" height="24" alt="" />
+        </button>
+        <div class="build-body">
+          <div class="stack">
+            <div class="stack-slot"><div class="stack-card"><img src="assets/plan/68316.png" alt="" /></div></div>
+            <div class="stack-slot"><div class="stack-card"><img src="assets/plan/5737f.png" alt="" /></div></div>
+            <div class="stack-slot"><div class="stack-card"><img src="assets/plan/af7ed.png" alt="" /></div></div>
+          </div>
+          <div class="build-info">
+            <div class="build-heading">
+              <h1>Building your plan</h1>
+              <p>5 places in New York, NY, sorted by area and opening hours</p>
+            </div>
+            <div class="build-progress">
+              <div class="build-bar"><span id="buildBar"></span></div>
+              <ul class="build-steps" id="buildSteps">
+                <li><span class="step-mark"><img src="assets/plan/65a65.svg" width="16" height="16" alt="" /></span>Grouping SoHo, Little Italy, Williamsburg...</li>
+                <li><span class="step-mark"><img src="assets/plan/65a65.svg" width="16" height="16" alt="" /></span>Checking what’s open <span id="buildWhen">this afternoon</span></li>
+                <li><span class="step-mark"><img src="assets/plan/65a65.svg" width="16" height="16" alt="" /></span>Fitting 5 places into your time</li>
+              </ul>
+            </div>
+            <p class="build-note">You decide what stays, and you can change it later</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="plan-screen light" id="screenDeck" aria-label="Keep or cut">
+        <header class="status light" data-status="light"></header>
+        <button class="plan-close" type="button" aria-label="Close" data-close>
+          <img src="assets/plan/fc709.svg" width="24" height="24" alt="" />
+        </button>
+        <div class="deck-tools">
+          <button class="undo" type="button" id="undo" aria-label="Undo last choice">
+            <span class="undo-thumb" id="undoThumb"></span>
+            <img src="assets/plan/6da95.svg" width="16" height="16" alt="" />
+          </button>
+          <button class="wand" type="button" id="wand" aria-label="Let TikTok pick">
+            <img src="assets/plan/1c85a.svg" width="15" height="15" alt="" />
+          </button>
+        </div>
+        <div class="deck-body">
+          <div class="deck-progress">
+            <span class="deck-count" id="deckCount">1 of 5</span>
+            <div class="deck-bar"><span id="deckBar"></span></div>
+          </div>
+          <div class="deck" id="deck"></div>
+          <div class="deck-actions">
+            <div class="choice-row">
+              <button class="choice cut" type="button" id="cutBtn">Cut</button>
+              <button class="choice keep" type="button" id="keepBtn">Keep</button>
+            </div>
+            <p class="deck-note">Cuts stay in your saved collection</p>
+          </div>
+        </div>
+
+        <div class="coach" id="coach">
+          <div class="coach-body">
+            <div class="coach-heading">
+              <h2>Keep or cut</h2>
+              <p>Five places, narrow down to three. Decide what makes it into your plans.</p>
+            </div>
+            <ul class="coach-list">
+              <li>
+                <img src="assets/plan/aeb8b.svg" width="32" height="32" alt="" />
+                <div><strong>Keep It</strong><span>Swipe right, or tap Keep</span></div>
+              </li>
+              <li>
+                <img src="assets/plan/eed46.svg" width="32" height="32" alt="" />
+                <div><strong>Cut It</strong><span>Swipe left, it doesn’t make your plans and stays in your collection</span></div>
+              </li>
+              <li>
+                <img src="assets/plan/e10b5.svg" width="32" height="32" alt="" />
+                <div><strong>Want details?</strong><span>Check the reviews for hours, queues and what to expect</span></div>
+              </li>
+            </ul>
+          </div>
+          <div class="coach-foot">
+            <button class="plan-btn-primary" type="button" id="coachOk">Got It</button>
+            <button class="coach-skip" type="button" id="coachSkip">Don’t show this again</button>
+          </div>
+        </div>
+
+        <div class="sheet-wrap" id="sheet">
+          <div class="sheet-scrim" data-sheet-close></div>
+          <div class="sheet" role="dialog" aria-label="Let TikTok pick">
+            <button class="plan-close" type="button" aria-label="Close" data-sheet-close>
+              <img src="assets/plan/fc709.svg" width="24" height="24" alt="" />
+            </button>
+            <div class="sheet-body">
+              <div class="sheet-intro">
+                <div class="sheet-wand"><img src="assets/plan/69710.svg" width="23" height="23" alt="" /></div>
+                <div class="sheet-copy">
+                  <div class="sheet-heading">
+                    <h2>Let TikTok pick</h2>
+                    <p>We’ll keep the three places that fit your plans, and set the rest of your saves aside.</p>
+                  </div>
+                  <ul class="criteria">
+                    <li>
+                      <span class="criteria-icon"><img src="assets/plan/c7e56.svg" width="21" height="21" alt="" /></span>
+                      <span class="criteria-text"><strong>How close they are</strong><span>Places in the same area, in an order that doesn't send you across the city twice</span></span>
+                    </li>
+                    <li>
+                      <span class="criteria-icon"><img src="assets/plan/8e7e1.svg" width="20" height="20" alt="" /></span>
+                      <span class="criteria-text"><strong>How people rate them</strong><span>TikTok's community scores, from people who actually went</span></span>
+                    </li>
+                    <li>
+                      <span class="criteria-icon"><img src="assets/plan/a3880.svg" width="20" height="20" alt="" /></span>
+                      <span class="criteria-text"><strong>What's busy right now</strong><span>Recent posts that show what's worth seeing</span></span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <button class="option option-dates" type="button">
+                <span class="option-lead">
+                  <img src="assets/plan/761c6.svg" width="22" height="22" alt="" />
+                  <span class="option-text"><span class="option-title">Add Dates</span><span class="option-sub">So we know what's open when you go</span></span>
+                </span>
+                <img src="assets/plan/0f726.svg" width="20" height="20" alt="" />
+              </button>
+              <div class="choice-row">
+                <button class="choice ghost" type="button" data-sheet-close>I’ll Pick</button>
+                <button class="choice primary" type="button" id="pickForMe">Pick For Me</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="plan-screen light" id="screenItinerary" aria-label="New York Itinerary">
+        <div class="itin-scroll" id="itinScroll">
+          <div class="itin-content" id="itinContent"></div>
+        </div>
+        <div class="itin-top"></div>
+        <div class="itin-heading">
+          <h1>New York Itinerary</h1>
+          <p id="itinSummary">Morning · 2 of 5 places</p>
+        </div>
+        <header class="status light" data-status="light"></header>
+        <button class="plan-close" type="button" aria-label="Back" id="itinBack">
+          <img src="assets/plan/c554e.svg" width="24" height="24" alt="" />
+        </button>
+        <button class="wand itin-shuffle" type="button" aria-label="Shuffle order" id="itinShuffle">
+          <img src="assets/plan/37e02.svg" width="16" height="16" alt="" />
+        </button>
+        <button class="plan-btn-primary itin-save" type="button" id="itinSave">Save to plans</button>
+
+        <div class="sheet-wrap" id="fitSheet">
+          <div class="sheet-scrim" data-fit-close></div>
+          <div class="sheet fit-sheet" role="dialog" aria-label="Place options">
+            <button class="plan-close" type="button" aria-label="Close" data-fit-close>
+              <img src="assets/plan/fc709.svg" width="24" height="24" alt="" />
+            </button>
+            <div class="fit-body">
+              <div class="fit-top">
+                <div class="fit-place">
+                  <span class="itin-thumb" id="fitThumb"><img src="assets/plan/d0ae0.svg" width="12" height="15.273" alt="" /></span>
+                  <div class="fit-place-text">
+                    <h2 id="fitTitle">DEDIKO</h2>
+                    <span id="fitRating"></span>
+                    <span class="itin-sub" id="fitSub"></span>
+                  </div>
+                </div>
+                <img class="fit-divider" src="assets/plan/0118f.svg" width="341" height="1" alt="" />
+              </div>
+              <div class="fit-actions">
+                <div class="fit-list">
+                  <button class="fit-row" type="button" id="fitAdd">
+                    <img src="assets/plan/0ba25.svg" width="22" height="22" alt="" id="fitAddIcon" />
+                    <span class="fit-row-text"><strong id="fitAddTitle">Add an evening plan</strong><span id="fitAddSub">Opens at 5PM</span></span>
+                    <img src="assets/plan/0f726.svg" width="20" height="20" alt="" />
+                  </button>
+                  <button class="fit-row" type="button" id="fitNew">
+                    <img src="assets/plan/761c6.svg" width="22" height="22" alt="" />
+                    <span class="fit-row-text"><strong>Start a new plan</strong><span>Build a separate day around it</span></span>
+                    <img src="assets/plan/0f726.svg" width="20" height="20" alt="" />
+                  </button>
+                </div>
+                <p class="fit-note">Nothing is removed from your collection either way</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="plan-screen light" id="screenSaved" aria-label="Saved to plans">
+        <header class="status light" data-status="light"></header>
+        <button class="plan-close" type="button" aria-label="Close" data-close>
+          <img src="assets/plan/fc709.svg" width="24" height="24" alt="" />
+        </button>
+        <div class="saved-body">
+          <div class="saved-intro">
+            <img src="assets/plan/fa841.svg" width="60" height="60" alt="" />
+            <div class="saved-text">
+              <h1>Saved to plans</h1>
+              <p>Your <span id="savedWhen">afternoon</span> now sits in your plans folder within your profile saves.</p>
+            </div>
+          </div>
+          <div class="saved-card">
+            <div id="savedCovers"></div>
+            <div class="saved-folder">
+              <div class="saved-folder-text">
+                <strong>New York</strong>
+                <span id="savedMeta">5 saves · Saved just now</span>
+              </div>
+              <span class="saved-edit"><img src="assets/plan/288b8.svg" width="16" height="16" alt="" /></span>
+            </div>
+          </div>
+        </div>
+        <div class="saved-actions">
+          <button class="saved-share" type="button" id="savedShare">Share with a friend</button>
+          <button class="saved-home" type="button" data-close>Back to Home</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <aside class="guide guide-steps" aria-label="How to use this prototype" aria-live="polite">
+    <ol class="guide-list" id="guideList">
+      <li data-step="1">
+        <span class="guide-num">1</span>
+        <div>
+          <strong>Save five places</strong>
+          <p>Tap the bookmark on the right of a video, then scroll down for the next one.</p>
+          <span class="guide-meta" id="guideSaved">0 of 5 saved</span>
+        </div>
+      </li>
+      <li data-step="2">
+        <span class="guide-num">2</span>
+        <div>
+          <strong>Tap “Plan it”</strong>
+          <p>Your fifth save expands the pop-up at the bottom of the screen.</p>
+        </div>
+      </li>
+      <li data-step="3">
+        <span class="guide-num">3</span>
+        <div>
+          <strong>Choose your time</strong>
+          <p>Pick how long you have, then tap “Build my plan.”</p>
+        </div>
+      </li>
+      <li data-step="4">
+        <span class="guide-num">4</span>
+        <div>
+          <strong>Keep or cut each place</strong>
+          <p>Swipe right to keep and left to cut, or use the buttons. You can undo a swipe with the undo button in the top left.</p>
+        </div>
+      </li>
+      <li data-step="5">
+        <span class="guide-num">5</span>
+        <div>
+          <strong>Let TikTok pick <em>Optional</em></strong>
+          <p>Tap the wand in the top right to have your plans chosen for you.</p>
+        </div>
+      </li>
+      <li data-step="6">
+        <span class="guide-num">6</span>
+        <div>
+          <strong>Review your itinerary</strong>
+          <p>Tap a place that didn’t fit to add or swap it in, then tap “Save to plans.”</p>
+        </div>
+      </li>
+    </ol>
+    <p class="guide-done" id="guideDone">You’ve completed the demo. Click “Restart demo” to try it again.</p>
+  </aside>
+  </div>
+
+  <script>
+    const railTemplate = (likes, comments, saves, shares) => `
+      <div class="avatar-wrap">
+        <img class="avatar" src="assets/avatar.png" alt="jolinatravels" />
+        <button class="follow" type="button" aria-label="Follow">
+          <img src="assets/icons/8103c.svg" width="22" height="22" alt="" />
+        </button>
+      </div>
+      <button class="action like" type="button" aria-label="Like">
+        <img src="assets/icons/4f714.svg" width="35" height="35" alt="" />
+        <span class="count">${likes}</span>
+      </button>
+      <button class="action" type="button" aria-label="Comment">
+        <img src="assets/icons/122f5.svg" width="34" height="34" alt="" />
+        <span class="count">${comments}</span>
+      </button>
+      <button class="action bookmark" type="button" aria-label="Save" aria-pressed="false">
+        <div class="bookmark-icon">
+          <img src="assets/icons/95778.svg" width="25.942" height="29.942" alt="" />
+        </div>
+        <span class="count">${saves}</span>
+      </button>
+      <button class="action share" type="button" aria-label="Share">
+        <img src="assets/icons/bb795.svg" width="33" height="33" alt="" />
+        <span class="count">${shares}</span>
+      </button>
+      <div class="disc">
+        <img src="assets/sound.png" alt="" />
+      </div>
+    `;
+
+    document.querySelectorAll("[data-rail]").forEach((rail) => {
+      rail.innerHTML = railTemplate(
+        rail.dataset.likes || "20.1K",
+        rail.dataset.comments || "231",
+        rail.dataset.saves || "965",
+        rail.dataset.shares || "1,021"
+      );
+    });
+
+    const feed = document.getElementById("feed");
+    const videos = [...document.querySelectorAll("video")];
+
+    const playCurrent = () => {
+      const mid = feed.scrollTop + feed.clientHeight / 2;
+      videos.forEach((video) => {
+        const slide = video.closest(".slide");
+        const top = slide.offsetTop;
+        const on = mid >= top && mid < top + slide.offsetHeight;
+        if (on && !slide.classList.contains("paused")) {
+          video.play().catch(() => {});
+        } else if (!on) {
+          video.pause();
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      () => playCurrent(),
+      { root: feed, threshold: 0.55 }
+    );
+    videos.forEach((video) => observer.observe(video));
+    feed.addEventListener("scroll", playCurrent, { passive: true });
+    playCurrent();
+
+    let feedSwipe = null;
+    let ignoreFeedClick = false;
+    const snapTo = (index) => {
+      const i = Math.max(0, Math.min(videos.length - 1, index));
+      feed.scrollTo({ top: i * feed.clientHeight, behavior: "smooth" });
+    };
+
+    const onFeedMove = (event) => {
+      if (!feedSwipe || event.pointerId !== feedSwipe.id) return;
+      const dy = event.clientY - feedSwipe.y;
+      if (Math.abs(dy) > 6) feedSwipe.moved = true;
+      feed.style.scrollSnapType = "none";
+      feed.style.scrollBehavior = "auto";
+      feed.scrollTop = feedSwipe.start - dy;
+    };
+
+    const onFeedEnd = (event) => {
+      if (!feedSwipe || event.pointerId !== feedSwipe.id) return;
+      const dy = event.clientY - feedSwipe.y;
+      const current = Math.round(feedSwipe.start / feed.clientHeight);
+      ignoreFeedClick = feedSwipe.moved;
+      feed.style.scrollSnapType = "";
+      feed.style.scrollBehavior = "";
+      if (dy < -48) snapTo(current + 1);
+      else if (dy > 48) snapTo(current - 1);
+      else snapTo(current);
+      window.removeEventListener("pointermove", onFeedMove);
+      window.removeEventListener("pointerup", onFeedEnd);
+      window.removeEventListener("pointercancel", onFeedEnd);
+      feedSwipe = null;
+      setTimeout(() => { ignoreFeedClick = false; }, 0);
+    };
+
+    feed.addEventListener("pointerdown", (event) => {
+      if (event.button && event.button !== 0) return;
+      if (event.target.closest("button, a, .rail, .tabs, .tabbar")) return;
+      feedSwipe = { id: event.pointerId, y: event.clientY, start: feed.scrollTop, moved: false };
+      window.addEventListener("pointermove", onFeedMove);
+      window.addEventListener("pointerup", onFeedEnd);
+      window.addEventListener("pointercancel", onFeedEnd);
+    });
+
+    const freezeFrame = (host, video) => {
+      const canvas = host.querySelector(".freeze");
+      if (!canvas || !video.videoWidth) return;
+      const ratio = Math.max(2, window.devicePixelRatio || 1);
+      const width = Math.round(host.clientWidth * ratio);
+      const height = Math.round(host.clientHeight * ratio);
+      canvas.width = width;
+      canvas.height = height;
+      const scale = Math.max(width / video.videoWidth, height / video.videoHeight);
+      const drawW = video.videoWidth * scale;
+      const drawH = video.videoHeight * scale;
+      canvas.getContext("2d").drawImage(video, (width - drawW) / 2, (height - drawH) / 2, drawW, drawH);
+    };
+
+    document.querySelectorAll(".slide").forEach((slide) => {
+      const video = slide.querySelector("video");
+      slide.addEventListener("click", (event) => {
+        if (event.target.closest("button, a, .rail, .tabs, .tabbar")) return;
+        if (ignoreFeedClick) return;
+        if (video.paused) {
+          slide.classList.remove("paused");
+          video.play().catch(() => {});
+        } else {
+          freezeFrame(slide, video);
+          video.pause();
+          slide.classList.add("paused");
+        }
+      });
+    });
+
+    document.querySelectorAll(".action.like").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        btn.classList.toggle("liked");
+      });
+    });
+
+    const PLAN_THRESHOLD = 5;
+    const BOOKMARK_OFF = "assets/icons/95778.svg";
+    const BOOKMARK_ON = "assets/icons/e6f28.svg";
+    const toast = document.getElementById("saveToast");
+    const planSub = document.getElementById("planSub");
+    let toastTimer;
+
+    const bumpCount = (text, delta) => {
+      if (!/^\d{1,3}(,\d{3})*$|^\d+$/.test(text)) return text;
+      const next = Number(text.replace(/,/g, "")) + delta;
+      return text.includes(",") ? next.toLocaleString("en-US") : String(next);
+    };
+
+    const hideToast = () => {
+      clearTimeout(toastTimer);
+      toast.classList.remove("show");
+    };
+
+    const showToast = (savedTotal) => {
+      const expanded = savedTotal >= PLAN_THRESHOLD;
+      toast.classList.toggle("expanded", expanded);
+      planSub.textContent = `${savedTotal} places saved in New York`;
+      toast.classList.remove("show");
+      void toast.offsetWidth;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(hideToast, expanded ? 5000 : 2500);
+    };
+
+    document.querySelectorAll(".action.bookmark").forEach((btn) => {
+      const icon = btn.querySelector(".bookmark-icon img");
+      const count = btn.querySelector(".count");
+      const baseCount = count.textContent;
+
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const saved = btn.classList.toggle("saved");
+        btn.setAttribute("aria-pressed", String(saved));
+        icon.src = saved ? BOOKMARK_ON : BOOKMARK_OFF;
+        count.textContent = saved ? bumpCount(baseCount, 1) : baseCount;
+
+        if (saved) {
+          showToast(document.querySelectorAll(".action.bookmark.saved").length);
+        } else {
+          hideToast();
+        }
+      });
+    });
+
+    const statusTemplate = (tone) => {
+      const icons = tone === "light"
+        ? ["assets/plan/e0631.svg", "assets/plan/2bf80.svg", "assets/plan/31204.svg"]
+        : ["assets/icons/47780.svg", "assets/icons/474a9.svg", "assets/icons/26c90.svg"];
+      return `
+        <div class="time">2:22</div>
+        <div class="island"><div class="camera"></div></div>
+        <div class="status-right">
+          <img src="${icons[0]}" width="20" height="20" alt="" />
+          <img src="${icons[1]}" width="20" height="20" alt="" />
+          <img src="${icons[2]}" width="32" height="20" alt="" />
+        </div>
+      `;
+    };
+
+    document.querySelectorAll("[data-status]").forEach((el) => {
+      el.innerHTML = statusTemplate(el.dataset.status);
+    });
+
+    const PLACES = [
+      {
+        image: "assets/plan/af7ed.png", video: "assets/video1.mov", area: "Little Italy, Manhattan",
+        title: "Feast of San Gennaro", sub: "On now · Runs through Sept 27", rating: ["4.9 Excellent", "343"],
+        detail: "Little Italy · Runs through Sept 27", extra: { period: "afternoon", note: "Runs all day" },
+      },
+      {
+        image: "assets/plan/5737f.png", video: "assets/video2.mov", area: "SoHo, Manhattan",
+        title: "RichTech Cafe", sub: "Open Mon-Sat 10AM–6PM", rating: ["4.2 Good", "121"],
+        detail: "SoHo · Open Mon–Sat 10AM–6PM",         extra: { period: "afternoon", note: "Open until 6PM" },
+      },
+      {
+        image: "assets/plan/68316.png", video: "assets/video3.mov", area: "Little Italy, Manhattan",
+        title: "DEDIKO", sub: "Open Tues-Sun 5PM–9PM", rating: ["5.0 Excellent", "1,251"],
+        detail: "Little Italy · Open Tues–Sun 5PM–9PM", extra: { period: "evening", note: "Opens at 5PM" },
+      },
+      {
+        image: "assets/plan/f5f73.png", video: "assets/video4.mov", area: "Williamsburg, Brooklyn",
+        title: "Music Hall of Williamsburg", sub: "Ruel performs Sep 27th @8PM", rating: ["4.6 Excellent", "214"],
+        detail: "Williamsburg · Ruel performs Sep 27th @8PM", extra: { period: "evening", note: "Doors at 8PM" }, tall: true,
+      },
+      {
+        image: "assets/plan/9df45.png", video: "assets/video5.mov", area: "SoHo, Manhattan",
+        title: "Old’s Havana", sub: "Open Wed-Sun 11AM–11PM", rating: ["4.7 Excellent", "550"],
+        detail: "SoHo · Open Wed-Sun 11AM–11PM", extra: { period: "evening", note: "Open until 11PM" }, tall: true,
+      },
+    ];
+
+    const PERIODS = { morning: "Morning", afternoon: "Afternoon", evening: "Evening" };
+
+    const MODES = {
+      morning: {
+        label: "Morning", when: "this morning", fit: 2,
+        slots: [{ period: "morning", place: 1, time: "10:00AM" }, { period: "morning", place: 0, time: "11:00AM" }],
+      },
+      afternoon: {
+        label: "Afternoon", when: "this afternoon", fit: 3,
+        slots: [
+          { period: "afternoon", place: 1, time: "12:00PM" },
+          { period: "afternoon", place: 4, time: "1:00PM" },
+          { period: "afternoon", place: 0, time: "3:00PM" },
+        ],
+      },
+      evening: {
+        label: "Evening", when: "this evening", fit: 3,
+        slots: [
+          { period: "evening", place: 2, time: "5:00PM" },
+          { period: "evening", place: 4, time: "6:30PM" },
+          { period: "evening", place: 3, time: "8:00PM" },
+        ],
+      },
+      fullDay: {
+        label: "Full Day", when: "today", fit: 5, sectioned: true,
+        slots: [
+          { period: "morning", place: 1, time: "10:00AM" },
+          { period: "morning", place: 0, time: "11:00AM" },
+          { period: "afternoon", place: 4, time: "1:00PM" },
+          { period: "evening", place: 2, time: "5:00PM" },
+          { period: "evening", place: 3, time: "8:00PM" },
+        ],
+      },
+      weekend: {
+        label: "Weekend", when: "this weekend", fit: 5, sectioned: true, days: ["Saturday", "Sunday"],
+        slots: [
+          { period: "morning", place: 0, time: "9:00AM" },
+          { period: "morning", place: 1, time: "11:00AM" },
+          { period: "afternoon", place: 4, time: "12:00PM" },
+          { period: "evening", place: 2, time: "5:00PM" },
+          { period: "evening", place: 3, time: "8:00PM" },
+        ],
+      },
+    };
+
+    const EXTRA_TIMES = {
+      morning: { 0: "11:00AM", 1: "10:00AM" },
+      afternoon: { 0: "3:00PM", 1: "12:00PM", 4: "1:00PM" },
+      evening: { 2: "5:00PM", 4: "6:30PM", 3: "8:00PM" },
+    };
+
+    const WALK_MINUTES = { "0-1": 12, "0-2": 4, "0-4": 11, "1-2": 13, "1-4": 5, "2-4": 10 };
+    const TRANSIT_MINUTES = 19;
+
+    const travelTime = (from, to) => {
+      const hoods = [from, to].map((i) => PLACES[i].area.split(",")[0]);
+      if (hoods.includes("Williamsburg") && hoods[0] !== hoods[1]) return `${TRANSIT_MINUTES} min transit`;
+      return `${WALK_MINUTES[[from, to].sort().join("-")]} min walk`;
+    };
+
+    const NEARBY = [
+      { image: "assets/plan/405ac.png", title: "Rubirosa", sub: "Little Italy · 4 min from DEDIKO" },
+      { image: "assets/plan/920af.png", title: "Housing Works", sub: "SoHo · 9 min walk from Feast of San Gennaro" },
+      { image: "assets/plan/edcc4.png", title: "Angelika Film", sub: "SoHo · 2 min walk from Old’s Havana" },
+    ];
+    const PROGRESS_WIDTHS = [70, 140, 200, 270, 347];
+    const SWIPE_THRESHOLD = 100;
+    const COACH_KEY = "planCoachHidden";
+
+    const screens = {
+      time: document.getElementById("screenTime"),
+      build: document.getElementById("screenBuild"),
+      deck: document.getElementById("screenDeck"),
+      itinerary: document.getElementById("screenItinerary"),
+      saved: document.getElementById("screenSaved"),
+    };
+    const deckEl = document.getElementById("deck");
+    const deckCount = document.getElementById("deckCount");
+    const deckBar = document.getElementById("deckBar");
+    const undoBtn = document.getElementById("undo");
+    const undoThumb = document.getElementById("undoThumb");
+    const coach = document.getElementById("coach");
+    const sheet = document.getElementById("sheet");
+    const fitSheet = document.getElementById("fitSheet");
+    const buildBar = document.getElementById("buildBar");
+    const buildSteps = [...document.querySelectorAll("#buildSteps li")];
+    const options = [...document.querySelectorAll("#screenTime .option[role=radio]")];
+
+    const plan = { mode: "afternoon", fit: 3, index: 0, decisions: [], timers: [], added: [], filled: [], swaps: {} };
+
+    const showScreen = (name) => {
+      Object.entries(screens).forEach(([key, el]) => el.classList.toggle("active", key === name));
+    };
+
+    const clearTimers = () => {
+      plan.timers.forEach(clearTimeout);
+      plan.timers = [];
+    };
+
+    const openPlan = () => {
+      plan.completed = false;
+      plan.mode = "afternoon";
+      plan.fit = MODES.afternoon.fit;
+      hideToast();
+      videos.forEach((video) => video.pause());
+      options.forEach((opt) => {
+        opt.classList.remove("selected");
+        opt.setAttribute("aria-checked", "false");
+      });
+      showScreen("time");
+    };
+
+    const closePlan = () => {
+      clearTimers();
+      clearTimeout(bannerTimer);
+      deckEl.querySelectorAll("video").forEach((video) => video.pause());
+      sheet.classList.remove("show");
+      fitSheet.classList.remove("show");
+      coach.classList.remove("show");
+      showScreen(null);
+      playCurrent();
+    };
+
+    options.forEach((opt) => {
+      opt.addEventListener("click", () => {
+        options.forEach((o) => {
+          o.classList.toggle("selected", o === opt);
+          o.setAttribute("aria-checked", String(o === opt));
+        });
+        plan.mode = opt.dataset.mode;
+        plan.fit = MODES[plan.mode].fit;
+      });
+    });
+
+    const startBuild = () => {
+      deckEl.querySelectorAll("video").forEach((video) => video.pause());
+      document.getElementById("buildWhen").textContent = MODES[plan.mode].when;
+      showScreen("build");
+      buildBar.style.transition = "none";
+      buildBar.style.width = "0";
+      buildSteps.forEach((li) => li.classList.remove("done"));
+      void buildBar.offsetWidth;
+      buildBar.style.transition = "";
+      buildSteps.forEach((li, i) => {
+        plan.timers.push(setTimeout(() => {
+          li.classList.add("done");
+          buildBar.style.width = `${((i + 1) / buildSteps.length) * 100}%`;
+        }, 600 + i * 700));
+      });
+      plan.timers.push(setTimeout(showItinerary, 600 + buildSteps.length * 700 + 400));
+    };
+
+    const cardTemplate = (place) => `
+      <img src="${place.image}" alt=""${place.tall ? ' style="height:115.69%;top:-7.84%;object-fit:fill"' : ""} />
+      <video src="${place.video}" muted loop playsinline webkit-playsinline preload="none"></video>
+      <canvas class="freeze"></canvas>
+      <div class="card-dim"></div>
+      <div class="card-shade"></div>
+      <div class="pause-hint" aria-hidden="true">
+        <svg viewBox="0 0 72 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 10v60l48-30-48-30Z" fill="#fff" fill-opacity=".9"/>
+        </svg>
+      </div>
+      <div class="chip">
+        <div class="chip-icon"><img src="assets/icons/54825.svg" width="17" height="17" alt="" /></div>
+        <span>${place.area}</span>
+      </div>
+      <div class="card-meta">
+        <span class="rating card-rating">
+          <img src="assets/plan/18626.svg" width="16" height="14.6293" alt="" />
+          <span><b>${place.rating[0]}</b> (${place.rating[1]})</span>
+          <img src="assets/plan/4af1b.svg" width="12" height="12" alt="" />
+        </span>
+        <div class="card-text">
+          <p class="card-title">${place.title}</p>
+          <p class="card-sub">${place.sub}</p>
+          <p class="card-handle">@jolinatravels</p>
+        </div>
+      </div>
+      <div class="card-badge keep"><img src="assets/plan/f5c34.svg" width="35" height="35" alt="" /></div>
+      <div class="card-badge cut"><img src="assets/plan/69517.svg" width="24" height="24" alt="" /></div>
+    `;
+
+    const makeCard = (place, isTop) => {
+      const card = document.createElement("div");
+      card.className = `place-card${isTop ? " top" : ""}`;
+      card.innerHTML = cardTemplate(place);
+      if (isTop) {
+        const video = card.querySelector("video");
+        video.preload = "auto";
+        video.autoplay = true;
+        card.classList.add("playing");
+      }
+      return card;
+    };
+
+    const setSwipeVisual = (card, dx) => {
+      const strength = Math.min(Math.abs(dx) / SWIPE_THRESHOLD, 1);
+      card.querySelector(".card-dim").style.opacity = strength;
+      card.querySelector(".card-badge.keep").style.opacity = dx > 0 ? strength : 0;
+      card.querySelector(".card-badge.cut").style.opacity = dx < 0 ? strength : 0;
+    };
+
+    let swipeLocked = false;
+
+    const renderDeck = () => {
+      swipeLocked = false;
+      deckEl.innerHTML = "";
+      const shown = Math.min(plan.index, PLACES.length - 1);
+      deckCount.textContent = `${shown + 1} of ${PLACES.length}`;
+      deckBar.style.width = `${PROGRESS_WIDTHS[shown]}px`;
+
+      const last = plan.decisions[plan.decisions.length - 1];
+      undoBtn.classList.toggle("show", Boolean(last));
+      if (last) undoThumb.style.backgroundImage = `url("${PLACES[last.index].image}")`;
+
+      if (plan.index >= PLACES.length) return;
+      if (plan.index + 1 < PLACES.length) deckEl.appendChild(makeCard(PLACES[plan.index + 1], false));
+      const top = makeCard(PLACES[plan.index], true);
+      deckEl.appendChild(top);
+      bindDrag(top);
+    };
+
+    const finishDeck = () => {
+      deckEl.querySelectorAll("video").forEach((video) => video.pause());
+      plan.timers.push(setTimeout(startBuild, 350));
+    };
+
+    const decide = (kind) => {
+      const card = deckEl.querySelector(".place-card.top");
+      if (!card || swipeLocked) return;
+      swipeLocked = true;
+      const dir = kind === "keep" ? 1 : -1;
+      card.querySelector("video")?.pause();
+      setSwipeVisual(card, dir * SWIPE_THRESHOLD);
+      card.classList.remove("returning");
+      card.classList.add("flying");
+      card.style.transform = `translate(${dir * 480}px, 40px) rotate(${dir * 18}deg)`;
+      card.style.opacity = "0";
+      plan.decisions.push({ index: plan.index, kind });
+      plan.index += 1;
+      updateGuide();
+
+      let settled = false;
+      const settle = () => {
+        if (settled) return;
+        settled = true;
+        card.removeEventListener("transitionend", onEnd);
+        clearTimeout(fallback);
+        renderDeck();
+        if (plan.index >= PLACES.length) finishDeck();
+      };
+      const onEnd = (event) => {
+        if (event.target !== card) return;
+        settle();
+      };
+      card.addEventListener("transitionend", onEnd);
+      const fallback = setTimeout(settle, 420);
+    };
+
+    const bindDrag = (card) => {
+      let startX = 0;
+      let startY = 0;
+      let dx = 0;
+      let dragging = false;
+      let pointerId = null;
+
+      const onMove = (event) => {
+        if (!dragging || event.pointerId !== pointerId || swipeLocked) return;
+        dx = event.clientX - startX;
+        const dy = (event.clientY - startY) * 0.3;
+        card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx / 20}deg)`;
+        setSwipeVisual(card, dx);
+      };
+
+      const stopListening = () => {
+        window.removeEventListener("pointermove", onMove);
+        window.removeEventListener("pointerup", onEnd);
+        window.removeEventListener("pointercancel", onEnd);
+        if (pointerId != null) {
+          try { card.releasePointerCapture(pointerId); } catch {}
+        }
+      };
+
+      const onEnd = (event) => {
+        if (!dragging || (event && event.pointerId !== pointerId)) return;
+        dragging = false;
+        stopListening();
+        if (swipeLocked) return;
+        if (Math.abs(dx) >= SWIPE_THRESHOLD) {
+          decide(dx > 0 ? "keep" : "cut");
+          return;
+        }
+        if (Math.abs(dx) < 6) {
+          const video = card.querySelector("video");
+          if (video.paused) {
+            video.play().catch(() => {});
+            card.classList.remove("paused");
+          } else {
+            freezeFrame(card, video);
+            video.pause();
+            card.classList.add("paused");
+          }
+        }
+        card.classList.add("returning");
+        card.style.transform = "";
+        setSwipeVisual(card, 0);
+      };
+
+      card.addEventListener("pointerdown", (event) => {
+        if (swipeLocked || card.classList.contains("flying") || event.button) return;
+        event.preventDefault();
+        dragging = true;
+        pointerId = event.pointerId;
+        startX = event.clientX;
+        startY = event.clientY;
+        dx = 0;
+        card.classList.remove("returning");
+        try { card.setPointerCapture(pointerId); } catch {}
+        window.addEventListener("pointermove", onMove);
+        window.addEventListener("pointerup", onEnd);
+        window.addEventListener("pointercancel", onEnd);
+      });
+    };
+
+    const startDeck = () => {
+      plan.index = 0;
+      plan.decisions = [];
+      renderDeck();
+      showScreen("deck");
+      coach.classList.toggle("show", localStorage.getItem(COACH_KEY) !== "1");
+      updateGuide();
+    };
+
+    document.getElementById("keepBtn").addEventListener("click", () => decide("keep"));
+    document.getElementById("cutBtn").addEventListener("click", () => decide("cut"));
+
+    undoBtn.addEventListener("click", () => {
+      const last = plan.decisions.pop();
+      if (!last) return;
+      clearTimers();
+      swipeLocked = false;
+      plan.index = last.index;
+      plan.completed = false;
+      renderDeck();
+      updateGuide();
+    });
+
+    document.getElementById("coachOk").addEventListener("click", () => coach.classList.remove("show"));
+    document.getElementById("coachSkip").addEventListener("click", () => {
+      localStorage.setItem(COACH_KEY, "1");
+      coach.classList.remove("show");
+    });
+
+    document.getElementById("wand").addEventListener("click", () => sheet.classList.add("show"));
+    sheet.querySelectorAll("[data-sheet-close]").forEach((el) => {
+      el.addEventListener("click", () => sheet.classList.remove("show"));
+    });
+
+    document.getElementById("pickForMe").addEventListener("click", () => {
+      const fits = new Set(MODES[plan.mode].slots.map((slot) => slot.place));
+      let kept = plan.decisions.filter((d) => d.kind === "keep").length;
+      for (let i = plan.index; i < PLACES.length; i += 1) {
+        const kind = kept < plan.fit && fits.has(i) ? "keep" : "cut";
+        if (kind === "keep") kept += 1;
+        plan.decisions.push({ index: i, kind });
+      }
+      plan.index = PLACES.length;
+      sheet.classList.remove("show");
+      renderDeck();
+      finishDeck();
+    });
+
+    const itinContent = document.getElementById("itinContent");
+    const itinScroll = document.getElementById("itinScroll");
+    const FALLBACK_TIMES = { morning: "9:00AM", afternoon: "2:00PM", evening: "7:00PM" };
+
+    const toMinutes = (time) => {
+      const [, h, m, ap] = time.match(/(\d+):(\d+)(AM|PM)/);
+      return ((Number(h) % 12) + (ap === "PM" ? 12 : 0)) * 60 + Number(m);
+    };
+
+    const itinerary = () => {
+      const mode = MODES[plan.mode];
+      const kept = new Set(plan.decisions.filter((d) => d.kind === "keep").map((d) => d.index).concat(plan.filled));
+      const base = mode.slots.filter((slot) => kept.has(slot.place)).slice(0, mode.fit);
+      const stops = base
+        .concat(plan.added)
+        .map((slot) => ({ ...slot, origin: slot.place, place: plan.swaps[slot.place] ?? slot.place }));
+      if (plan.reversed) {
+        Object.keys(PERIODS).forEach((period) => {
+          const group = stops.filter((s) => s.period === period);
+          const places = group.map((s) => s.place).reverse();
+          group.forEach((s, i) => { s.shown = places[i]; });
+        });
+      }
+      const inPlan = new Set(stops.map((s) => s.place));
+      const periods = Object.keys(PERIODS).map((period) => ({
+        period,
+        stops: stops
+          .filter((s) => s.period === period)
+          .map((s) => ({ ...s, place: s.shown ?? s.place }))
+          .sort((a, b) => toMinutes(a.time) - toMinutes(b.time)),
+      }));
+      const left = PLACES.map((_, i) => i).filter((i) => !inPlan.has(i));
+      const fillable = base.length < mode.fit
+        ? left.filter((i) => !kept.has(i) && mode.slots.some((slot) => slot.place === i))
+        : [];
+      return { mode, stops, periods, left, fillable };
+    };
+
+    const ratingHTML = (place) => `
+      <span class="rating">
+        <img src="assets/plan/45d81.svg" width="12" height="10.972" alt="" />
+        <span><b>${place.rating[0]}</b> (${place.rating[1]})</span>
+      </span>`;
+
+    const stopHTML = (stop) => {
+      const place = PLACES[stop.place];
+      return `
+        <div class="stop">
+          <span class="stop-time">${stop.time}</span>
+          <span class="stop-line"><img src="assets/plan/d4f35.svg" width="78" height="2" alt="" /></span>
+          <div class="stop-media">
+            <span class="itin-thumb" style="background-image:url('${place.image}')"><img src="assets/plan/ad4be.svg" width="12" height="15.2727" alt="" /></span>
+            <div class="stop-text">
+              <strong>${place.title}</strong>
+              ${ratingHTML(place)}
+              <span class="itin-sub">${place.detail}</span>
+              <span class="itin-handle">@jolinatravels</span>
+            </div>
+          </div>
+        </div>`;
+    };
+
+    const travelHTML = (from, to) => {
+      const text = travelTime(from, to);
+      const walk = !text.includes("transit");
+      return `
+        <div class="travel">
+          <span class="travel-mode${walk ? " walk" : ""}">
+            <img src="assets/plan/${walk ? "cfa73" : "26d27"}.svg" width="16" height="16" alt="" />
+            <span>${text}</span>
+          </span>
+          <img src="assets/plan/67932.svg" width="6.28582" height="11.2859" alt="" />
+        </div>`;
+    };
+
+    const timelineHTML = (stops, next) => {
+      const parts = stops.map((stop, i) => {
+        const after = stops[i + 1] || next;
+        return stopHTML(stop) + (after ? travelHTML(stop.place, after.place) : "");
+      });
+      return `<div class="timeline">${parts.join("")}</div>`;
+    };
+
+    const addStopHTML = (title, sub = "Find more places nearby") => `
+      <div class="add-stop">
+        <img src="assets/plan/09064.svg" width="34" height="34" alt="" />
+        <span class="list-text"><strong>${title}</strong><span>${sub}</span></span>
+      </div>`;
+
+    const placeRowHTML = ({ image, title, sub }, index) => `
+      <button class="place-row" type="button"${index === undefined ? "" : ` data-place="${index}"`}>
+        <span class="place-thumb" style="background-image:url('${image}')"></span>
+        <span class="list-text"><strong>${title}</strong><span>${sub}</span></span>
+        <img src="assets/plan/0f726.svg" width="20" height="20" alt="" />
+      </button>`;
+
+    const restHTML = (left, mode, sectioned, hasRoom) => {
+      const head = left.length
+        ? sectioned
+          ? `<div class="list-text"><strong>Still to place</strong><span>Swap one, add it to a window, or save it for a different plan</span></div>`
+          : hasRoom
+            ? `<div class="list-text"><strong>Still to place</strong><span>Add one to fill your ${mode.label.toLowerCase()}, or save it for a different plan</span></div>`
+            : `<div class="list-text"><strong>Didn’t fit ${mode.when}</strong><span>Swap one in or save it for a different plan</span></div>`
+        : `<div class="itin-rest-head">
+             <div class="list-text"><strong>More near your stops</strong><span>Recommendations based on your interests</span></div>
+             <span class="see-more">See more</span>
+           </div>`;
+      const rows = left.length
+        ? left.map((i) => placeRowHTML({ image: PLACES[i].image, title: PLACES[i].title, sub: PLACES[i].detail }, i))
+        : NEARBY.map((item) => placeRowHTML(item));
+      return `
+        <div class="itin-rest">
+          <div class="itin-divider"></div>
+          <div class="itin-rest-body">${head}<div class="place-list">${rows.join("")}</div></div>
+        </div>`;
+    };
+
+    let bannerTimer = 0;
+    let bannerShownAt = 0;
+
+    const setItinBanner = (text) => {
+      plan.banner = text;
+      bannerShownAt = Date.now();
+    };
+
+    const hideItinBanner = () => {
+      plan.banner = "";
+      itinContent.querySelectorAll(".itin-banner").forEach((el) => {
+        el.classList.add("hide");
+        setTimeout(() => el.remove(), 300);
+      });
+    };
+
+    const scheduleBannerHide = () => {
+      clearTimeout(bannerTimer);
+      if (!plan.banner) return;
+      const wait = Math.max(0, 3000 - (Date.now() - bannerShownAt));
+      bannerTimer = setTimeout(hideItinBanner, wait);
+    };
+
+    const bannerHTML = () => {
+      if (!plan.banner) return "";
+      if (Date.now() - bannerShownAt >= 3000) {
+        plan.banner = "";
+        return "";
+      }
+      return `<div class="itin-banner"><img src="assets/plan/5941f.svg" width="13.5" height="9.75" alt="" /><span>${plan.banner}</span></div>`;
+    };
+
+    const renderItinerary = () => {
+      const { mode, stops, periods, left, fillable } = itinerary();
+      document.getElementById("itinSummary").textContent = `${mode.label} · ${stops.length} of ${PLACES.length} places`;
+      const sectioned = mode.sectioned || plan.added.length > 0;
+      itinContent.classList.toggle("sectioned", sectioned);
+      const banner = bannerHTML();
+
+      if (!sectioned) {
+        let body = banner + (stops.length ? timelineHTML(periods.flatMap((p) => p.stops)) : "");
+        if (fillable.length) body += addStopHTML(stops.length ? "Add another stop" : "Add something to do here", "Pick one from your saves below");
+        else if (!stops.length) body += addStopHTML("Add something to do here");
+        itinContent.innerHTML = body + restHTML(left, mode, false, fillable.length > 0);
+        scheduleBannerHide();
+        return;
+      }
+
+      const emptyDay = mode.days && plan.day > 0;
+      const sections = periods.map(({ period, stops: list }, i) => {
+        const shown = emptyDay ? [] : list;
+        const nextFirst = emptyDay ? null : periods[i + 1]?.stops[0];
+        let body = "";
+        if (shown.length) body += timelineHTML(shown, nextFirst);
+        if (shown.length < 2) body += addStopHTML(shown.length ? "Add another stop" : "Add something to do here");
+        return `
+          <div class="itin-section">
+            <div class="itin-section-head">
+              <h2>${PERIODS[period]}</h2>
+              <div class="itin-divider"></div>
+            </div>
+            ${body}
+          </div>`;
+      });
+
+      const tabs = mode.days
+        ? `<div class="itin-tabs">${mode.days.map((day, i) => `<button class="itin-tab${i === plan.day ? " active" : ""}" type="button" data-day="${i}">${day}</button>`).join("")}</div>`
+        : "";
+      itinContent.innerHTML = `${banner}${tabs}<div class="itin-sections">${sections.join("")}${restHTML(emptyDay ? [] : left, mode, true)}</div>`;
+      scheduleBannerHide();
+    };
+
+    const showItinerary = () => {
+      plan.added = [];
+      plan.filled = [];
+      plan.swaps = {};
+      plan.banner = "";
+      bannerShownAt = 0;
+      clearTimeout(bannerTimer);
+      plan.day = 0;
+      plan.reversed = false;
+      renderItinerary();
+      itinScroll.scrollTop = 0;
+      showScreen("itinerary");
+    };
+
+    const openFitSheet = (index) => {
+      const place = PLACES[index];
+      const { mode, periods, fillable } = itinerary();
+      const { period, note } = place.extra;
+      const count = periods.find((p) => p.period === period).stops.length;
+      const sectioned = mode.sectioned || plan.added.length > 0;
+      const action = fillable.includes(index) ? "fill" : count === 0 ? "new" : sectioned && count < 2 ? "add" : "swap";
+      const name = PERIODS[period].toLowerCase();
+      const slot = mode.slots.find((s) => s.place === index);
+      document.getElementById("fitThumb").style.backgroundImage = `url('${place.image}')`;
+      document.getElementById("fitTitle").textContent = place.title;
+      document.getElementById("fitRating").innerHTML = ratingHTML(place);
+      document.getElementById("fitSub").textContent = place.detail;
+      document.getElementById("fitAddIcon").src = `assets/plan/${action === "swap" ? "29b48" : "0ba25"}.svg`;
+      document.getElementById("fitAddTitle").textContent = {
+        new: `Add ${period === "morning" ? "a" : "an"} ${name} plan`,
+        add: `Add it to your ${name}`,
+        swap: "Swap into your plan",
+        fill: `Add it to your ${mode.label.toLowerCase()}`,
+      }[action];
+      document.getElementById("fitAddSub").textContent = {
+        swap: "Takes a stop’s place and keeps its time",
+        fill: `Fits in at ${slot?.time}`,
+      }[action] || note;
+      fitSheet.dataset.place = index;
+      fitSheet.dataset.action = action;
+      fitSheet.classList.add("show");
+    };
+
+    const swapIntoPlan = (index) => {
+      const { period } = PLACES[index].extra;
+      const { stops, periods } = itinerary();
+      const target = periods.find((p) => p.period === period).stops.at(-1);
+      const slot = stops.find((s) => s.place === target.place);
+      if (index === slot.origin) delete plan.swaps[slot.origin];
+      else plan.swaps[slot.origin] = index;
+      setItinBanner(`Swapped in · ${PLACES[index].title} is at ${target.time}`);
+    };
+
+    const addToPlan = (index) => {
+      const { period } = PLACES[index].extra;
+      const { action } = fitSheet.dataset;
+      if (action === "swap") {
+        swapIntoPlan(index);
+      } else if (action === "fill") {
+        plan.filled.push(index);
+        setItinBanner(`${PLACES[index].title} added to your ${MODES[plan.mode].label.toLowerCase()}`);
+      } else {
+        plan.added.push({ period, place: index, time: EXTRA_TIMES[period][index] || FALLBACK_TIMES[period] });
+        setItinBanner(action === "new"
+          ? `${PERIODS[period]} added · ${PLACES[index].title} is in it`
+          : `${PLACES[index].title} added to your ${PERIODS[period].toLowerCase()}`);
+      }
+      fitSheet.classList.remove("show");
+      renderItinerary();
+      itinScroll.scrollTop = 0;
+    };
+
+    itinContent.addEventListener("click", (e) => {
+      const row = e.target.closest("[data-place]");
+      if (row) openFitSheet(Number(row.dataset.place));
+      const tab = e.target.closest("[data-day]");
+      if (tab) {
+        plan.day = Number(tab.dataset.day);
+        renderItinerary();
+      }
+    });
+
+    fitSheet.querySelectorAll("[data-fit-close]").forEach((el) => {
+      el.addEventListener("click", () => fitSheet.classList.remove("show"));
+    });
+    document.getElementById("fitAdd").addEventListener("click", () => addToPlan(Number(fitSheet.dataset.place)));
+    document.getElementById("fitNew").addEventListener("click", () => {
+      fitSheet.classList.remove("show");
+      openPlan();
+    });
+
+    document.getElementById("itinBack").addEventListener("click", () => showScreen("time"));
+    document.getElementById("itinShuffle").addEventListener("click", () => {
+      plan.reversed = !plan.reversed;
+      renderItinerary();
+    });
+
+    const COVER_LAYOUTS = [
+      [],
+      [{ left: 137, top: 18, rotate: 2 }],
+      [{ left: 86, top: 30, rotate: -10 }, { left: 188, top: 22, rotate: 8 }],
+      [{ left: 52, top: 34, rotate: -12 }, { left: 137, top: 14, rotate: 1 }, { left: 222, top: 32, rotate: 12 }],
+      [{ left: 32, top: 38, rotate: -14 }, { left: 100, top: 16, rotate: -4 }, { left: 174, top: 22, rotate: 5 }, { left: 246, top: 36, rotate: 14 }],
+      [
+        { left: 21, top: 41, rotate: -15 },
+        { left: 56, top: 14, rotate: -3.63 },
+        { left: 125, top: 30, rotate: 4 },
+        { left: 194, top: 19, rotate: -11.53 },
+        { left: 255, top: 38, rotate: 16.03 },
+      ],
+    ];
+
+    const renderSavedFolder = () => {
+      const images = itinerary().stops.map((stop) => PLACES[stop.place].image);
+      const layout = COVER_LAYOUTS[Math.min(images.length, 5)];
+      const shown = images.slice(0, layout.length);
+      document.getElementById("savedCovers").innerHTML = shown.map((src, i) => {
+        const { left, top, rotate } = layout[i];
+        return `<span class="saved-cover" style="left:${left}px;top:${top}px;transform:rotate(${rotate}deg);background-image:url('${src}')"></span>`;
+      }).join("");
+      const n = images.length;
+      document.getElementById("savedMeta").textContent = `${n} save${n === 1 ? "" : "s"} · Saved just now`;
+    };
+
+    document.getElementById("itinSave").addEventListener("click", () => {
+      plan.completed = true;
+      document.getElementById("savedWhen").textContent = MODES[plan.mode].label.toLowerCase();
+      renderSavedFolder();
+      showScreen("saved");
+    });
+
+    const savedShare = document.getElementById("savedShare");
+    savedShare.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(location.href);
+        savedShare.textContent = "Link copied";
+      } catch {
+        savedShare.textContent = "Couldn’t copy link";
+      }
+      setTimeout(() => { savedShare.textContent = "Share with a friend"; }, 2000);
+    });
+
+    const PHONE_FRAME_HEIGHT = 844 + 24;
+    const PAGE_MARGIN = 48;
+    const guide = document.querySelector(".guide-steps");
+    const guideSteps = [...document.querySelectorAll("#guideList li")];
+    const guideSaved = document.getElementById("guideSaved");
+
+    const fitPhone = () => {
+      const scale = Math.min(1, (window.innerHeight - PAGE_MARGIN) / PHONE_FRAME_HEIGHT);
+      document.documentElement.style.setProperty("--phone-scale", scale.toFixed(3));
+    };
+
+    const currentStep = () => {
+      if (screens.itinerary.classList.contains("active")) return 6;
+      if (sheet.classList.contains("show")) return 5;
+      if (screens.deck.classList.contains("active") || screens.build.classList.contains("active")) {
+        return plan.decisions.length > 0 ? 5 : 4;
+      }
+      if (screens.time.classList.contains("active")) return 3;
+      const saved = document.querySelectorAll(".action.bookmark.saved").length;
+      return saved >= PLAN_THRESHOLD ? 2 : 1;
+    };
+
+    const updateGuide = () => {
+      const saved = document.querySelectorAll(".action.bookmark.saved").length;
+      const step = plan.completed ? 0 : currentStep();
+      guideSaved.textContent = `${Math.min(saved, PLAN_THRESHOLD)} of ${PLAN_THRESHOLD} saved`;
+      guideSteps.forEach((li) => {
+        const n = Number(li.dataset.step);
+        li.classList.toggle("active", n === step);
+        li.classList.toggle("done", plan.completed || (n < step && (n !== 5 || step === 6)));
+      });
+      guide.classList.toggle("complete", Boolean(plan.completed));
+      if (saved > 0 || step !== 1) showReset();
+    };
+
+    const guideReset = document.getElementById("guideReset");
+    const showReset = () => guideReset.classList.add("show");
+
+    feed.addEventListener("scroll", () => {
+      if (feed.scrollTop > 40) showReset();
+    }, { passive: true });
+
+    new MutationObserver(updateGuide).observe(document.querySelector(".phone"), {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    guideReset.addEventListener("click", () => {
+      localStorage.removeItem(COACH_KEY);
+      location.reload();
+    });
+
+    window.addEventListener("resize", fitPhone);
+    fitPhone();
+    updateGuide();
+
+    document.querySelectorAll("#plan [data-close]").forEach((btn) => btn.addEventListener("click", closePlan));
+    document.getElementById("buildPlan").addEventListener("click", startDeck);
+    toast.querySelector(".plan-btn").addEventListener("click", openPlan);
+  </script>
+</body>
+</html>

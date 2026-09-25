@@ -1,0 +1,26 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Comment icon" clip-path="url(#clip0_0_96)">
+<g id="Group" opacity="0.9" filter="url(#filter0_d_0_96)">
+<path id="Vector" fill-rule="evenodd" clip-rule="evenodd" d="M28.6572 26.0443C32.029 22.6667 34 19.1486 34 15.052C34 6.73889 26.3894 0 16.9999 0C7.61066 0 0 6.73889 0 15.0522C0 23.3655 7.85687 29.0725 17.2464 29.0725V31.8293C17.2464 32.7028 18.1521 33.265 18.9201 32.8488C21.3196 31.5485 25.7662 28.9404 28.6572 26.0443ZM8.74194 13.0222C10.0839 13.0222 11.1716 14.1021 11.1716 15.4324C11.1716 16.7653 10.0839 17.8451 8.74194 17.8451C7.40231 17.8451 6.31447 16.7653 6.31447 15.4324C6.31447 14.1021 7.40231 13.0222 8.74194 13.0222ZM19.4286 15.4324C19.4286 14.1021 18.3413 13.0222 17 13.0222C15.6589 13.0222 14.5715 14.1021 14.5715 15.4324C14.5715 16.7653 15.659 17.8451 17 17.8451C18.3413 17.8451 19.4286 16.7653 19.4286 15.4324ZM25.2577 13.0222C26.5994 13.0222 27.6856 14.1021 27.6856 15.4324C27.6856 16.7653 26.5995 17.8451 25.2577 17.8451C23.916 17.8451 22.8284 16.7653 22.8285 15.4324C22.8285 14.1021 23.9161 13.0222 25.2577 13.0222Z" fill="white"/>
+</g>
+<path id="Vector_2" opacity="0.1" fill-rule="evenodd" clip-rule="evenodd" d="M17.4251 27.625C17.4251 27.625 25.5474 26.9973 28.9426 22.65C25.5474 27.4321 22.1522 30.0405 19.1814 30.91C16.2106 31.7795 17.4251 27.625 17.4251 27.625Z" fill="url(#paint0_linear_0_96)"/>
+</g>
+<defs>
+<filter id="filter0_d_0_96" x="-1.97101" y="-0.985507" width="37.942" height="36.9309" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="0.985507"/>
+<feGaussianBlur stdDeviation="0.985507"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_96"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_96" result="shape"/>
+</filter>
+<linearGradient id="paint0_linear_0_96" x1="14.4573" y1="26.6828" x2="15.8016" y2="30.9071" gradientUnits="userSpaceOnUse">
+<stop/>
+<stop offset="1" stop-opacity="0.01"/>
+</linearGradient>
+<clipPath id="clip0_0_96">
+<rect width="34" height="34" fill="white"/>
+</clipPath>
+</defs>
+</svg>
